@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ShopZone</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .order-summary {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 18px;
+            color: #667eea;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 2px solid #667eea;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .cart-items {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cart-item-img {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .cart-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-price {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .required {
+            color: red;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Checkout</h1>
+            <p>Complete your order</p>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-btn">← Back to Shopping</a>
+
+            <div id="successMessage" class="success-message">
+                <h3>✅ Order Placed Successfully!</h3>
+                <p>Order ID: <strong id="orderId"></strong></p>
+                <p>We'll contact you soon for delivery confirmation.</p>
+                <button onclick="location.href='index.html'" style="margin-top: 15px; padding: 10px 20px; background: white; color: #4caf50; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Continue Shopping</button>
+            </div>
+
+            <div id="checkoutForm">
+                <div class="section">
+                    <h2>📦 Order Summary</h2>
+                    <div class="order-summary">
+                        <div class="cart-items" id="cartItemsList"></div>
+                        <div class="order-item">
+                            <span>Total Amount:</span>
+                            <span id="totalAmount">₹0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="addressForm">
+                    <div class="section">
+                        <h2>👤 Customer Details</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Full Name <span class="required">*</span></label>
+                                <input type="text" id="fullName" required placeholder="Enter your full name">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number <span class="required">*</span></label>
+                                <input type="tel" id="phone" required placeholder="10-digit mobile number" pattern="[0-9]{10}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="email" placeholder="your.email@example.com">
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>📍 Delivery Address</h2>
+                        <div class="form-group">
+                            <label>House No. / Building Name <span class="required">*</span></label>
+                            <input type="text" id="houseNo" required placeholder="Flat/House No, Building Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Street Address <span class="required">*</span></label>
+                            <input type="text" id="street" required placeholder="Area, Street, Sector, Village">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City <span class="required">*</span></label>
+                                <input type="text" id="city" required placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <label>State <span class="required">*</span></label>
+                                <input type="text" id="state" required placeholder="State">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>PIN Code <span class="required">*</span></label>
+                                <input type="text" id="pincode" required placeholder="6-digit PIN code" pattern="[0-9]{6}">
+                            </div>
+                            <div class="form-group">
+                                <label>Landmark</label>
+                                <input type="text" id="landmark" placeholder="Optional">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>💳 Payment Method</h2>
+                        <div class="form-group">
+                            <select id="paymentMethod" required>
+                                <option value="COD">Cash on Delivery (COD)</option>
+                                <option value="Online">Online Payment</option>
+                                <option value="Card">Credit/Debit Card</option>
+                                <option value="UPI">UPI</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea id="notes" placeholder="Any special instructions for delivery?"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">Place Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let cart = [];
+
+        // Load cart from localStorage
+        function loadCart() {
+            const savedCart = localStorage.getItem('shopzone_cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            displayCart();
+        }
+
+        function displayCart() {
+            const cartItemsList = document.getElementById('cartItemsList');
+            const totalAmount = document.getElementById('totalAmount');
+
+            cartItemsList.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-img">
+                        ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}">` : `<span style="font-size: 30px;">${item.icon || '📦'}</span>`}
+                    </div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">₹${Number(item.price).toLocaleString('en-IN')} × ${item.quantity}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
+            totalAmount.textContent = '₹' + total.toLocaleString('en-IN');
+        }
+
+        // Handle form submission
+        document.getElementById('addressForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Placing Order...';
+
+            const orderData = {
+                customer: {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    email: document.getElementById('email').value.trim()
+                },
+                address: {
+                    houseNo: document.getElementById('houseNo').value.trim(),
+                    street: document.getElementById('street').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    state: document.getElementById('state').value.trim(),
+                    pincode: document.getElementById('pincode').value.trim(),
+                    landmark: document.getElementById('landmark').value.trim()
+                },
+                paymentMethod: document.getElementById('paymentMethod').value,
+                notes: document.getElementById('notes').value.trim(),
+                items: cart,
+                totalAmount: cart.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0)
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (!response.ok) throw new Error('Failed to place order');
+
+                const result = await response.json();
+                
+                // Clear cart
+                localStorage.removeItem('shopzone_cart');
+                
+                // Show success message
+                document.getElementById('orderId').textContent = result.orderId;
+                document.getElementById('checkoutForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error placing order:', error);
+                alert('Failed to place order. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Place Order';
+            }
+        });
+
+        // Initialize
+        loadCart();
+    </script>
+</body>
+</html>
